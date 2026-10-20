@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#B42318">
+<title>He@lth Europe · Notfallpass</title>
+<style>
+  :root {
+    --primary: #028090;
+    --primary-dark: #026873;
+    --accent: #02c39a;
+    --ink: #1f3850;
+    --muted: #5b6b7a;
+    --bg: #f5f8fa;
+    --card: #ffffff;
+    --line: #dde5ea;
+    --red: #B42318;
+    --red-soft: #FDECEA;
+    --amber-soft: #FFF4E5;
+    --amber: #8A4B00;
+    --green-soft: #E7F6EF;
+    --green: #146C43;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.45;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 0 16px 32px; }
+
+  /* Top emergency bar */
+  .topbar {
+    background: var(--red);
+    color: #fff;
+    padding: 10px 16px;
+  }
+  .topbar-inner {
+    max-width: 560px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .3px; }
+  .cross {
+    width: 26px; height: 26px; border-radius: 6px; background: #fff; position: relative; flex: none;
+  }
+  .cross::before, .cross::after { content: ""; position: absolute; background: var(--red); border-radius: 2px; }
+  .cross::before { left: 10px; top: 4px; width: 6px; height: 18px; }
+  .cross::after  { left: 4px; top: 10px; width: 18px; height: 6px; }
+  .brand small { display: block; font-weight: 600; font-size: 12px; opacity: .9; letter-spacing: 1.2px; text-transform: uppercase; }
+  .langs { display: flex; gap: 4px; }
+  .langs button {
+    background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.55);
+    border-radius: 6px; padding: 6px 9px; font-size: 13px; font-weight: 700; cursor: pointer; min-width: 40px;
+  }
+  .langs button[aria-pressed="true"] { background: #fff; color: var(--red); border-color: #fff; }
+
+  /* Call 112 */
+  .call {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin: 16px 0 0; padding: 14px; border-radius: 12px;
+    background: var(--card); border: 2px solid var(--red); color: var(--red);
+    font-weight: 800; font-size: 18px; text-decoration: none;
+  }
+
+  /* Identity */
+  .identity {
+    margin-top: 16px; background: var(--card); border-radius: 16px; padding: 20px;
+    border: 1px solid var(--line);
+  }
+  .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); }
+  .name { font-size: 28px; font-weight: 800; margin: 4px 0 14px; line-height: 1.15; word-break: break-word; }
+  .vitals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .vital { background: var(--bg); border-radius: 12px; padding: 12px 14px; }
+  .vital .label { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .vital .value { font-size: 30px; font-weight: 800; line-height: 1.1; margin-top: 2px; }
+  .vital.blood .value { color: var(--red); }
+
+  /* Sections */
+  .section {
+    margin-top: 14px; background: var(--card); border-radius: 16px; padding: 18px 20px;
+    border: 1px solid var(--line);
+  }
+  .section h2 {
+    font-size: 15px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+  }
+  .section.alert { border: 2px solid var(--red); background: var(--red-soft); }
+  .section.alert h2 { color: var(--red); }
+  .section ul { list-style: none; }
+  .section li { padding: 10px 0; border-top: 1px solid var(--line); font-size: 18px; font-weight: 600; }
+  .section li:first-child { border-top: none; padding-top: 2px; }
+  .section.alert li { border-top-color: rgba(180,35,24,.2); }
+  .section li .note { display: block; font-size: 15px; font-weight: 500; color: var(--muted); margin-top: 2px; }
+  .section.alert li .note { color: #7a2e26; }
+  .tag-protected {
+    font-size: 11px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase;
+    background: var(--amber-soft); color: var(--amber); padding: 3px 8px; border-radius: 20px; margin-left: auto;
+  }
+  .phone-link { color: var(--primary-dark); font-weight: 800; text-decoration: none; }
+
+  /* Protected */
+  .locked {
+    margin-top: 14px; background: var(--amber-soft); border-radius: 16px; padding: 18px 20px; color: var(--amber);
+    border: 1px solid #F3D3A6;
+  }
+  .locked strong { display: block; font-size: 16px; margin-bottom: 4px; }
+  .locked p { font-size: 15px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 12px; padding: 12px 16px; border-radius: 10px; border: none; cursor: pointer;
+    background: var(--primary); color: #fff; font-weight: 700; font-size: 16px; width: 100%;
+  }
+  .btn.secondary { background: #fff; color: var(--primary-dark); border: 1px solid var(--line); }
+
+  /* Notice */
+  .notice {
+    margin-top: 14px; background: var(--green-soft); color: var(--green); border-radius: 12px; padding: 12px 16px; font-size: 14px;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .meta { margin-top: 18px; font-size: 13px; color: var(--muted); text-align: center; }
+  .meta b { color: var(--ink); }
+  .demo-flag {
+    margin-top: 10px; text-align: center; font-size: 12px; color: var(--muted);
+    border: 1px dashed var(--line); border-radius: 8px; padding: 8px;
+  }
+  .footer-brand { margin-top: 16px; text-align: center; font-weight: 800; color: var(--primary); }
+  .footer-brand span { color: var(--accent); }
+
+  /* Modal */
+  .modal { position: fixed; inset: 0; background: rgba(15,30,45,.55); display: none; align-items: flex-end; justify-content: center; padding: 16px; z-index: 10; }
+  .modal.open { display: flex; }
+  .sheet { background: #fff; width: 100%; max-width: 480px; border-radius: 16px; padding: 20px; }
+  .sheet h3 { font-size: 20px; margin-bottom: 6px; }
+  .sheet p { color: var(--muted); font-size: 15px; margin-bottom: 12px; }
+  .pin {
+    width: 100%; font-size: 28px; letter-spacing: 12px; text-align: center; padding: 12px; border-radius: 10px;
+    border: 2px solid var(--line); font-weight: 800;
+  }
+  .pin:focus { outline: none; border-color: var(--primary); }
+  .err { color: var(--red); font-size: 14px; min-height: 20px; margin-top: 6px; }
+
+  /* Not found / landing */
+  .empty { margin-top: 40px; text-align: center; }
+  .empty h1 { font-size: 24px; margin-bottom: 8px; }
+  .empty p { color: var(--muted); }
+  .empty a { color: var(--primary-dark); font-weight: 700; }
+
+  @media (min-width: 600px) { .modal { align-items: center; } }
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="cross" aria-hidden="true"></div>
+        <div>He@lth Europe<small id="t-cardtitle">Pase de emergencia</small></div>
+      </div>
+      <nav class="langs" aria-label="Language">
+        <button type="button" data-lang="de">DE</button>
+        <button type="button" data-lang="es">ES</button>
+        <button type="button" data-lang="en">EN</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" id="app"></main>
+
+  <div class="modal" id="pinModal" role="dialog" aria-modal="true" aria-labelledby="pinTitle">
+    <div class="sheet">
+      <h3 id="pinTitle"></h3>
+      <p id="pinText"></p>
+      <input class="pin" id="pinInput" type="password" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="PIN">
+      <div class="err" id="pinErr" role="alert"></div>
+      <button class="btn" id="pinOk" type="button"></button>
+      <button class="btn secondary" id="pinCancel" type="button"></button>
+    </div>
+  </div>
+
+<script>
+/* ============================================================
+   He@lth Europe – vista pública de la tarjeta NFC (DEMO)
+   La tarjeta NFC guarda solo una URL: ?id=<ID-DE-TARJETA>
+   En producción los datos vendrían del servidor; aquí están
+   embebidos y son FICTICIOS.
+   ============================================================ */
+
+const PROFILES = {
+  "JG-4829-7F2A": {
+    name: "Juan García",
+    age: 42,
+    blood: "O+",
+    updated: "2026-10-15",
+    demoPin: "1234",
+    // Modo Inteligente: qué ve cualquiera sin PIN (igual que en el panel del usuario)
+    publicFields: { age: true, blood: true, allergies: true, meds: true, chronic: false, contact: false, restrictions: false },
+    allergies: {
+      es: [["Penicilina", "Reacción cutánea (rash)"], ["Polen de abedul", "Rinitis alérgica"]],
+      de: [["Penicillin", "Hautausschlag"], ["Birkenpollen", "Allergische Rhinitis"]],
+      en: [["Penicillin", "Skin rash"], ["Birch pollen", "Allergic rhinitis"]]
+    },
+    meds: {
+      es: [["Omeprazol 20 mg", "1× al día"], ["Atorvastatina 40 mg", "1× al día"], ["Metformina 500 mg", "2× al día"]],
+      de: [["Omeprazol 20 mg", "1× täglich"], ["Atorvastatin 40 mg", "1× täglich"], ["Metformin 500 mg", "2× täglich"]],
+      en: [["Omeprazole 20 mg", "once daily"], ["Atorvastatin 40 mg", "once daily"], ["Metformin 500 mg", "twice daily"]]
+    },
+    chronic: {
+      es: [["Diabetes tipo 2", ""], ["Hipertensión", ""], ["Reflujo gastroesofágico", ""]],
+      de: [["Typ-2-Diabetes", ""], ["Bluthochdruck", ""], ["Refluxkrankheit", ""]],
+      en: [["Type 2 diabetes", ""], ["Hypertension", ""], ["Gastro-oesophageal reflux", ""]]
+    },
+    contact: { phone: "+34 612 345 999" },
+    restrictions: {
+      es: [["Sin actividades intensas", ""]],
+      de: [["Keine intensive körperliche Belastung", ""]],
+      en: [["No strenuous physical activity", ""]]
+    }
+  }
+};
+
+const T = {
+  es: {
+    cardtitle: "Pase de emergencia", call: "Llamar al 112", holder: "Titular de la tarjeta",
+    age: "Edad", years: "años", blood: "Grupo sanguíneo",
+    allergies: "Alergias", meds: "Medicación actual", chronic: "Enfermedades crónicas",
+    contact: "Contacto de emergencia", restrictions: "Restricciones médicas", protected: "Protegido",
+    lockedTitle: "Más datos protegidos",
+    lockedText: (n) => `El titular protege ${n} apartado${n === 1 ? "" : "s"} más. Solo personal sanitario autorizado con PIN.`,
+    unlock: "Acceso profesional con PIN",
+    pinTitle: "Acceso profesional", pinText: "Introduce el PIN de 4 cifras. Este acceso queda registrado.",
+    pinOk: "Desbloquear", pinCancel: "Cancelar", pinErr: "PIN incorrecto",
+    notified: "El titular recibe un aviso de esta consulta. Fecha y hora quedan registradas.",
+    accessed: "Consultado", updated: "Datos actualizados por el titular", cardId: "Tarjeta",
+    demo: "DEMO · Datos ficticios · PIN de prueba: 1234",
+    notFoundT: "Tarjeta no encontrada", notFoundP: "Este enlace no corresponde a ninguna tarjeta activa.",
+    landingT: "He@lth Europe", landingP: "Acerca el móvil a una tarjeta o pulsera He@lth para ver sus datos de emergencia.",
+    landingLink: "Ver la tarjeta de demostración"
+  },
+  de: {
+    cardtitle: "Notfallpass", call: "112 anrufen", holder: "Karteninhaber",
+    age: "Alter", years: "Jahre", blood: "Blutgruppe",
+    allergies: "Allergien", meds: "Aktuelle Medikation", chronic: "Chronische Erkrankungen",
+    contact: "Notfallkontakt", restrictions: "Medizinische Einschränkungen", protected: "Geschützt",
+    lockedTitle: "Weitere geschützte Daten",
+    lockedText: (n) => `Der Inhaber schützt ${n} weitere${n === 1 ? "n Bereich" : " Bereiche"}. Nur für berechtigtes medizinisches Personal mit PIN.`,
+    unlock: "Fachzugang mit PIN",
+    pinTitle: "Fachzugang", pinText: "Bitte 4-stellige PIN eingeben. Dieser Zugriff wird protokolliert.",
+    pinOk: "Entsperren", pinCancel: "Abbrechen", pinErr: "Falsche PIN",
+    notified: "Der Inhaber wird über diesen Abruf benachrichtigt. Datum und Uhrzeit werden protokolliert.",
+    accessed: "Abgerufen", updated: "Zuletzt vom Inhaber aktualisiert", cardId: "Karte",
+    demo: "DEMO · Fiktive Daten · Test-PIN: 1234",
+    notFoundT: "Karte nicht gefunden", notFoundP: "Dieser Link gehört zu keiner aktiven Karte.",
+    landingT: "He@lth Europe", landingP: "Halten Sie das Smartphone an eine He@lth-Karte oder ein Armband, um die Notfalldaten zu sehen.",
+    landingLink: "Demo-Karte ansehen"
+  },
+  en: {
+    cardtitle: "Emergency card", call: "Call 112", holder: "Card holder",
+    age: "Age", years: "years", blood: "Blood type",
+    allergies: "Allergies", meds: "Current medication", chronic: "Chronic conditions",
+    contact: "Emergency contact", restrictions: "Medical restrictions", protected: "Protected",
+    lockedTitle: "More protected data",
+    lockedText: (n) => `The holder protects ${n} more section${n === 1 ? "" : "s"}. Authorised medical staff with PIN only.`,
+    unlock: "Professional access with PIN",
+    pinTitle: "Professional access", pinText: "Enter the 4-digit PIN. This access is logged.",
+    pinOk: "Unlock", pinCancel: "Cancel", pinErr: "Wrong PIN",
+    notified: "The holder is notified of this access. Date and time are logged.",
+    accessed: "Accessed", updated: "Last updated by the holder", cardId: "Card",
+    demo: "DEMO · Fictitious data · Test PIN: 1234",
+    notFoundT: "Card not found", notFoundP: "This link does not belong to an active card.",
+    landingT: "He@lth Europe", landingP: "Hold your phone to a He@lth card or wristband to see the emergency data.",
+    landingLink: "View the demo card"
+  }
+};
+
+const LOCALE = { es: "es-ES", de: "de-DE", en: "en-GB" };
+const params = new URLSearchParams(location.search);
+const cardId = (params.get("id") || "").toUpperCase();
+const profile = PROFILES[cardId];
+const openedAt = new Date();
+let unlocked = false;
+
+function pickLang() {
+  const asked = (params.get("lang") || "").toLowerCase();
+  if (T[asked]) return asked;
+  for (const l of (navigator.languages || [navigator.language || "es"])) {
+    const code = l.slice(0, 2).toLowerCase();
+    if (T[code]) return code;
+  }
+  return "es";
+}
+let lang = pickLang();
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function fmtDateTime(d) {
+  return d.toLocaleString(LOCALE[lang], { dateStyle: "medium", timeStyle: "short" });
+}
+function fmtDate(iso) {
+  return new Date(iso + "T12:00:00").toLocaleDateString(LOCALE[lang], { dateStyle: "medium" });
+}
+function list(items) {
+  return "<ul>" + items.map(([main, note]) =>
+    `<li>${esc(main)}${note ? `<span class="note">${esc(note)}</span>` : ""}</li>`).join("") + "</ul>";
+}
+function section(key, icon, body, opts = {}) {
+  const t = T[lang];
+  return `<section class="section${opts.alert ? " alert" : ""}" aria-labelledby="h-${key}">
+    <h2 id="h-${key}"><span aria-hidden="true">${icon}</span>${t[key]}${opts.protectedTag ? `<span class="tag-protected">${t.protected}</span>` : ""}</h2>
+    ${body}
+  </section>`;
+}
+
+function render() {
+  const t = T[lang];
+  document.documentElement.lang = lang;
+  document.getElementById("t-cardtitle").textContent = t.cardtitle;
+  document.title = `He@lth Europe · ${t.cardtitle}`;
+  document.querySelectorAll(".langs button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  const app = document.getElementById("app");
+
+  if (!cardId) {
+    app.innerHTML = `<div class="empty"><h1>${t.landingT}</h1><p>${t.landingP}</p>
+      <p style="margin-top:16px"><a href="?id=JG-4829-7F2A">${t.landingLink}</a></p></div>`;
+    return;
+  }
+  if (!profile) {
+    app.innerHTML = `<a class="call" href="tel:112">📞 ${t.call}</a>
+      <div class="empty"><h1>${t.notFoundT}</h1><p>${t.notFoundP}</p></div>`;
+    return;
+  }
+
+  const p = profile, pub = p.publicFields;
+  const show = (k) => pub[k] || unlocked;
+  const isProt = (k) => !pub[k] && unlocked;
+
+  let html = `<a class="call" href="tel:112">📞 ${t.call}</a>`;
+
+  html += `<section class="identity" aria-label="${t.holder}">
+    <div class="eyebrow">${t.holder}</div>
+    <div class="name">${esc(p.name)}</div>
+    <div class="vitals">
+      ${show("age") ? `<div class="vital"><div class="label">${t.age}</div><div class="value">${p.age} <span style="font-size:16px;font-weight:600">${t.years}</span></div></div>` : ""}
+      ${show("blood") ? `<div class="vital blood"><div class="label">${t.blood}</div><div class="value">${esc(p.blood)}</div></div>` : ""}
+    </div>
+  </section>`;
+
+  if (show("allergies")) html += section("allergies", "⚠️", list(p.allergies[lang]), { alert: true, protectedTag: isProt("allergies") });
+  if (show("meds")) html += section("meds", "💊", list(p.meds[lang]), { protectedTag: isProt("meds") });
+  if (show("chronic")) html += section("chronic", "🩺", list(p.chronic[lang]), { protectedTag: isProt("chronic") });
+  if (show("contact")) html += section("contact", "📞",
+    `<ul><li><a class="phone-link" href="tel:${p.contact.phone.replace(/\s/g, "")}">${esc(p.contact.phone)}</a></li></ul>`,
+    { protectedTag: isProt("contact") });
+  if (show("restrictions")) html += section("restrictions", "🚫", list(p.restrictions[lang]), { protectedTag: isProt("restrictions") });
+
+  const hidden = ["chronic", "contact", "restrictions", "allergies", "meds"].filter(k => !pub[k]).length;
+  if (hidden > 0 && !unlocked) {
+    html += `<div class="locked"><strong>🔒 ${t.lockedTitle}</strong><p>${t.lockedText(hidden)}</p>
+      <button class="btn" type="button" id="unlockBtn">${t.unlock}</button></div>`;
+  }
+
+  html += `<div class="notice"><span aria-hidden="true">🔔</span><span>${t.notified}</span></div>`;
+  html += `<div class="meta">${t.accessed}: <b>${fmtDateTime(openedAt)}</b><br>
+    ${t.updated}: <b>${fmtDate(p.updated)}</b><br>${t.cardId}: <b>${esc(cardId)}</b></div>`;
+  html += `<div class="demo-flag">${t.demo}</div>`;
+  html += `<div class="footer-brand">He<span>@</span>lth Europe</div>`;
+
+  app.innerHTML = html;
+  const ub = document.getElementById("unlockBtn");
+  if (ub) ub.addEventListener("click", openPin);
+}
+
+/* PIN modal (demo: se valida en el navegador; en producción, en el servidor) */
+const modal = document.getElementById("pinModal");
+const pinInput = document.getElementById("pinInput");
+const pinErr = document.getElementById("pinErr");
+function openPin() {
+  const t = T[lang];
+  document.getElementById("pinTitle").textContent = t.pinTitle;
+  document.getElementById("pinText").textContent = t.pinText;
+  document.getElementById("pinOk").textContent = t.pinOk;
+  document.getElementById("pinCancel").textContent = t.pinCancel;
+  pinErr.textContent = "";
+  pinInput.value = "";
+  modal.classList.add("open");
+  setTimeout(() => pinInput.focus(), 50);
+}
+function closePin() { modal.classList.remove("open"); }
+function tryPin() {
+  if (pinInput.value === profile.demoPin) {
+    unlocked = true; closePin(); render(); window.scrollTo({ top: 0, behavior: "smooth" });
+  } else {
+    pinErr.textContent = T[lang].pinErr; pinInput.select();
+  }
+}
+document.getElementById("pinOk").addEventListener("click", tryPin);
+document.getElementById("pinCancel").addEventListener("click", closePin);
+pinInput.addEventListener("keydown", e => { if (e.key === "Enter") tryPin(); if (e.key === "Escape") closePin(); });
+modal.addEventListener("click", e => { if (e.target === modal) closePin(); });
+
+document.querySelectorAll(".langs button").forEach(b => b.addEventListener("click", () => { lang = b.dataset.lang; render(); }));
+render();
+</script>
+</body>
+</html>
